@@ -1,63 +1,282 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GlobeTrotter — Smart Travel Planner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-    
-<!--Explore Cities page Created by kartik raval-->
+<div class="app">
 
-<section id="cities" class="page">
-  <div class="card">
-    <div class="toolbar">
-      <h2>Explore Cities</h2>
-      <input class="search" id="citySearch" oninput="filterCities()" placeholder="Search cities...">
+<!--The code of Sidebar written by — Darshan-->
+
+<aside class="sidebar">
+  <div class="logo">Globe<span>Trotter</span></div>
+<!-- nav bar -->
+  <nav class="nav">
+    <button class="active" onclick="showPage('dashboard', this)"><i>⌂</i><span>Dashboard</span></button>
+    <button onclick="showPage('create', this)"><i>＋</i><span>Plan New Trip</span></button>
+    <button onclick="showPage('trips', this)"><i>▣</i><span>My Trips</span></button>
+    <button onclick="showPage('itinerary', this)"><i>☷</i><span>Itinerary</span></button>
+    <button onclick="showPage('cities', this)"><i>⌕</i><span>Explore Cities</span></button>
+    <button onclick="showPage('budget', this)"><i>₹</i><span>Budget</span></button>
+    <button onclick="showPage('share', this)"><i>↗</i><span>Share Trip</span></button>
+  </nav>
+
+  <div class="side-bottom">
+    ✦ Smart planning<br>
+    <span>Personalized • Interactive • Budget-aware</span>
+  </div>
+</aside>
+
+<main class="main">
+<div class="topbar"><h1 id="pageTitle">Dashboard</h1><div class="profile"><span>Hi, Darshan 👋</span><div class="avatar">D</div></div></div>
+
+<!--The code of Dashboard written by - DARSHAN  -->
+
+
+<section id="dashboard" class="page active">
+
+  <div class="hero">
+    <div>
+      <h2>Your next adventure starts here.</h2>
+      <p>Design a multi-city journey, discover experiences and keep your trip within budget.</p>
+      <button class="btn primary" onclick="showPage('create')">＋ Plan New Trip</button>
+    </div>
+    <div class="hero-art">🌍✈️</div>
+  </div>
+
+  <div class="grid">
+
+    <div class="card">
+      <h3>Recent Trips</h3>
+      <div class="trip-grid">
+
+        <div class="trip">
+          <div class="trip-img" style="background-image:url('https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=700&q=80')"></div>
+          <div class="trip-body">
+            <b>Royal Rajasthan</b>
+            <small>Oct 12 – Oct 18 · 4 cities</small>
+            <div class="chips">
+              <span class="chip">₹32,500</span>
+              <span class="chip">7 days</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="trip">
+          <div class="trip-img" style="background-image:url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=700&q=80')"></div>
+          <div class="trip-body">
+            <b>Goa Escape</b>
+            <small>Nov 03 – Nov 06 · 2 cities</small>
+            <div class="chips">
+              <span class="chip">₹14,800</span>
+              <span class="chip">4 days</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="trip">
+          <div class="trip-img" style="background-image:url('https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=700&q=80')"></div>
+          <div class="trip-body">
+            <b>Golden Triangle</b>
+            <small>Dec 20 – Dec 26 · 3 cities</small>
+            <div class="chips">
+              <span class="chip">₹28,200</span>
+              <span class="chip">7 days</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
 
-    <div id="cityList" class="trip-grid">
+    <div class="card">
+      <h3>Trip Snapshot</h3>
+      <div class="stat-row">
+        <div class="stat"><strong>3</strong><span>Active trips</span></div>
+        <div class="stat"><strong>9</strong><span>Cities planned</span></div>
+        <div class="stat"><strong>₹75K</strong><span>Total estimate</span></div>
+      </div>
 
-      <div class="trip">
-        <div class="trip-img" style="background-image:url('https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=700&q=80')"></div>
-        <div class="trip-body">
-          <b>Jaipur</b>
-          <small>India · Heritage · Cost index 2.1</small>
-          <button class="btn primary" style="margin-top:10px;padding:8px 12px" onclick="toast('Jaipur added to your trip!')">Add to Trip</button>
+      <h3 style="margin-top:24px">Popular right now</h3>
+
+      <div class="destination">
+        <div class="dest-img" style="background-image:url('https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=300&q=80')"></div>
+        <div><b>Udaipur, India</b><small>Romantic lakes & palaces · ₹₹</small></div>
+      </div>
+
+      <div class="destination">
+        <div class="dest-img" style="background-image:url('https://images.unsplash.com/photo-1596176530529-78163a4f7af2?auto=format&fit=crop&w=300&q=80')"></div>
+        <div><b>Jaipur, India</b><small>Culture & heritage · ₹</small></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Create Trip page created by Mihir -->
+
+<section id="create" class="page">
+  <div class="card form-card">
+    <h2>Create a New Trip</h2>
+    <p style="color:var(--muted)">Start with the basics. You can add cities and activities next.</p>
+
+    <div class="form-grid">
+      <div class="field">
+        <label>Trip Name</label>
+        <input id="tripName" placeholder="e.g. Rajasthan Adventure">
+      </div>
+      <div class="field">
+        <label>Travel Style</label>
+        <select>
+          <option>Balanced</option>
+          <option>Budget</option>
+          <option>Luxury</option>
+          <option>Adventure</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Start Date</label>
+        <input type="date" id="startDate">
+      </div>
+      <div class="field">
+        <label>End Date</label>
+        <input type="date" id="endDate">
+      </div>
+      <div class="field full">
+        <label>Description</label>
+        <input id="tripDesc" placeholder="Tell us what you want to experience...">
+      </div>
+      <div class="field">
+        <label>Estimated Budget (₹)</label>
+        <input id="budgetInput" type="number" placeholder="30000">
+      </div>
+      <div class="field">
+        <label>Cover Destination</label>
+        <select>
+          <option>Jaipur</option>
+          <option>Udaipur</option>
+          <option>Goa</option>
+          <option>Delhi</option>
+          <option>Mumbai</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="btn primary" style="margin-top:20px" onclick="createTrip()">Save & Build Itinerary →</button>
+  </div>
+</section>
+
+<!-- Trips page created by Mihir -->
+
+<section id="trips" class="page">
+  <div class="card">
+    <div class="toolbar">
+      <h2>My Trips</h2>
+      <button class="btn primary" onclick="showPage('create')">＋ New Trip</button>
+    </div>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Trip</th>
+          <th>Dates</th>
+          <th>Cities</th>
+          <th>Budget</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><b>Royal Rajasthan</b></td>
+          <td>Oct 12–18</td>
+          <td>4</td>
+          <td>₹32,500</td>
+          <td><span class="chip">Planning</span></td>
+        </tr>
+        <tr>
+          <td><b>Goa Escape</b></td>
+          <td>Nov 03–06</td>
+          <td>2</td>
+          <td>₹14,800</td>
+          <td><span class="chip">Ready</span></td>
+        </tr>
+        <tr>
+          <td><b>Golden Triangle</b></td>
+          <td>Dec 20–26</td>
+          <td>3</td>
+          <td>₹28,200</td>
+          <td><span class="chip">Planning</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- itinerary page created by Mihir -->
+
+
+<section id="itinerary" class="page">
+  <div class="card">
+    <div class="toolbar">
+      <div>
+        <h2 style="margin:0">Royal Rajasthan</h2>
+        <small style="color:var(--muted)">7 days · Jaipur → Jodhpur → Udaipur → Pushkar</small>
+      </div>
+      <button class="btn light" onclick="toast('Itinerary exported successfully!')">Export PDF</button>
+    </div>
+
+    <div class="timeline">
+
+      <div class="day">
+        <div class="day-date">12 OCT<small>DAY 1 · Jaipur</small></div>
+        <div class="event">
+          <div><b>Amber Fort & City Palace</b><small>09:00 – 13:00 · Sightseeing</small></div>
+          <span class="cost">₹1,200</span>
         </div>
       </div>
 
-      <div class="trip">
-        <div class="trip-img" style="background-image:url('https://images.unsplash.com/photo-1566552881560-0be862a7c445?auto=format&fit=crop&w=700&q=80')"></div>
-        <div class="trip-body">
-          <b>Mumbai</b>
-          <small>India · Food & city life · Cost index 2.8</small>
-          <button class="btn primary" style="margin-top:10px;padding:8px 12px" onclick="toast('Mumbai added to your trip!')">Add to Trip</button>
+      <div class="day">
+        <div class="day-date">13 OCT<small>DAY 2 · Jaipur</small></div>
+        <div class="event">
+          <div><b>Hawa Mahal + Food Walk</b><small>10:00 – 17:00 · Culture & Food</small></div>
+          <span class="cost">₹1,800</span>
         </div>
       </div>
 
-      <div class="trip">
-        <div class="trip-img" style="background-image:url('https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=700&q=80')"></div>
-        <div class="trip-body">
-          <b>Goa</b>
-          <small>India · Beaches · Cost index 2.4</small>
-          <button class="btn primary" style="margin-top:10px;padding:8px 12px" onclick="toast('Goa added to your trip!')">Add to Trip</button>
+      <div class="day">
+        <div class="day-date">14 OCT<small>DAY 3 · Jodhpur</small></div>
+        <div class="event">
+          <div><b>Mehrangarh Fort</b><small>09:30 – 14:00 · Heritage</small></div>
+          <span class="cost">₹1,500</span>
         </div>
       </div>
 
-      <div class="trip">
-        <div class="trip-img" style="background-image:url('https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=700&q=80')"></div>
-        <div class="trip-body">
-          <b>Delhi</b>
-          <small>India · History & food · Cost index 2.0</small>
-          <button class="btn primary" style="margin-top:10px;padding:8px 12px" onclick="toast('Delhi added to your trip!')">Add to Trip</button>
+      <div class="day">
+        <div class="day-date">16 OCT<small>DAY 5 · Udaipur</small></div>
+        <div class="event">
+          <div><b>Lake Pichola Boat Ride</b><small>16:00 – 19:00 · Experience</small></div>
+          <span class="cost">₹2,200</span>
+        </div>
+      </div>
+
+      <div class="day">
+        <div class="day-date">18 OCT<small>DAY 7 · Udaipur</small></div>
+        <div class="event">
+          <div><b>Departure</b><small>Checkout + Airport Transfer</small></div>
+          <span class="cost">₹1,000</span>
         </div>
       </div>
 
     </div>
   </div>
 </section>
+
 
 <!-- Budget page Created by kartik raval-->
 
@@ -114,7 +333,14 @@
     </div>
   </div>
 </section>
-<script src="script.js"></script>
+</main>
+</div>
 
+</main></div>
+
+<div class="toast" id="toast"></div>
+<div class="modal" id="modal"><div class="modal-box"><button class="close" onclick="closeModal()">×</button><h2>Trip Created 🎉</h2><p>Your trip has been saved. The demo will now open the itinerary builder.</p><button class="btn primary" onclick="closeModal();showPage('itinerary')">Open Itinerary</button></div></div>
+<script src="script.js"></script>
+>>>>>>> 47bcdebc63ad735dfc9fc24a4aeeb4983328d4e6
 </body>
 </html>
