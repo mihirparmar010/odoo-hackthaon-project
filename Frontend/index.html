@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="app">
+  <div class="app">
 
 <!--The code of Sidebar written by — Darshan-->
 
@@ -276,6 +276,63 @@
     </div>
   </div>
 </section>
+
+
+<!-- Budget page Created by kartik raval-->
+
+<section id="budget" class="page">
+  <div class="budget">
+
+    <div class="card">
+      <h2>Trip Budget</h2>
+      <div class="big-number">₹32,500</div>
+      <p style="color:var(--muted)">Estimated total · 7 days</p>
+
+      <div class="legend"><span>Transport</span><b>₹7,500</b></div>
+      <div class="bar"><span style="width:55%"></span></div>
+
+      <div class="legend"><span>Stay</span><b>₹12,000</b></div>
+      <div class="bar"><span style="width:72%"></span></div>
+
+      <div class="legend"><span>Activities</span><b>₹6,500</b></div>
+      <div class="bar"><span style="width:42%"></span></div>
+
+      <div class="legend"><span>Meals</span><b>₹6,500</b></div>
+      <div class="bar"><span style="width:42%"></span></div>
+    </div>
+
+    <div class="card">
+      <h2>Budget Health</h2>
+      <div style="font-size:62px;text-align:center;margin:20px">🟢</div>
+      <h3 style="text-align:center">You're on track!</h3>
+      <p style="text-align:center;color:var(--muted)">
+        Average daily spend: <b>₹4,643</b><br>
+        Recommended daily limit: ₹5,000
+      </p>
+      <button class="btn primary" style="width:100%" onclick="toast('Budget optimized — ₹2,300 potential savings found!')">Optimize Budget</button>
+    </div>
+
+  </div>
+</section>
+
+<!--Share Trip page Created by kartik raval-->
+
+<section id="share" class="page">
+  <div class="card share">
+    <h2>Share Your Itinerary</h2>
+    <p style="color:var(--muted)">Create a public, read-only link so friends can view or copy your trip.</p>
+
+    <div style="display:flex;gap:10px;max-width:700px">
+      <input id="shareLink" class="search" value="globetrotter.app/trip/royal-rajasthan" readonly>
+      <button class="btn primary" onclick="copyLink()">Copy Link</button>
+    </div>
+
+    <div style="margin-top:28px">
+      <button class="btn light" onclick="toast('Share dialog opened!')">↗️ Share on Social</button>
+      <button class="btn light" onclick="toast('Trip duplicated to your account!')">Copy Trip</button>
+    </div>
+  </div>
+</section>
 </main>
 </div>
 
@@ -284,5 +341,6 @@
 <div class="toast" id="toast"></div>
 <div class="modal" id="modal"><div class="modal-box"><button class="close" onclick="closeModal()">×</button><h2>Trip Created 🎉</h2><p>Your trip has been saved. The demo will now open the itinerary builder.</p><button class="btn primary" onclick="closeModal();showPage('itinerary')">Open Itinerary</button></div></div>
 <script src="script.js"></script>
+>>>>>>> 47bcdebc63ad735dfc9fc24a4aeeb4983328d4e6
 </body>
 </html>

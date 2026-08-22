@@ -1,4 +1,41 @@
 
+.budget {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+}
+
+.big-number {
+  font-size: 38px;
+  font-weight: 800;
+}
+
+.bar {
+  height: 10px;
+  background: #edf0f5;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 9px 0 15px;
+}
+
+.bar span {
+  display: block;
+  height: 100%;
+  background: var(--primary);
+  border-radius: 10px;
+}
+
+.legend {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  padding: 8px 0;
+}
+
+.share {
+  background: linear-gradient(135deg, #fff4ef, #eef3ff);
+  border: 1px solid #f1ded8;
+}
 .toolbar {
   display: flex;
   gap: 10px;
