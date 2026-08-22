@@ -7,6 +7,114 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <script src="script.js"></script>
+    
+<!--Explore Cities page Created by kartik raval-->
+
+<section id="cities" class="page">
+  <div class="card">
+    <div class="toolbar">
+      <h2>Explore Cities</h2>
+      <input class="search" id="citySearch" oninput="filterCities()" placeholder="Search cities...">
+    </div>
+
+    <div id="cityList" class="trip-grid">
+
+      <div class="trip">
+        <div class="trip-img" style="background-image:url('https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=700&q=80')"></div>
+        <div class="trip-body">
+          <b>Jaipur</b>
+          <small>India · Heritage · Cost index 2.1</small>
+          <button class="btn primary" style="margin-top:10px;padding:8px 12px" onclick="toast('Jaipur added to your trip!')">Add to Trip</button>
+        </div>
+      </div>
+
+      <div class="trip">
+        <div class="trip-img" style="background-image:url('https://images.unsplash.com/photo-1566552881560-0be862a7c445?auto=format&fit=crop&w=700&q=80')"></div>
+        <div class="trip-body">
+          <b>Mumbai</b>
+          <small>India · Food & city life · Cost index 2.8</small>
+          <button class="btn primary" style="margin-top:10px;padding:8px 12px" onclick="toast('Mumbai added to your trip!')">Add to Trip</button>
+        </div>
+      </div>
+
+      <div class="trip">
+        <div class="trip-img" style="background-image:url('https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=700&q=80')"></div>
+        <div class="trip-body">
+          <b>Goa</b>
+          <small>India · Beaches · Cost index 2.4</small>
+          <button class="btn primary" style="margin-top:10px;padding:8px 12px" onclick="toast('Goa added to your trip!')">Add to Trip</button>
+        </div>
+      </div>
+
+      <div class="trip">
+        <div class="trip-img" style="background-image:url('https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=700&q=80')"></div>
+        <div class="trip-body">
+          <b>Delhi</b>
+          <small>India · History & food · Cost index 2.0</small>
+          <button class="btn primary" style="margin-top:10px;padding:8px 12px" onclick="toast('Delhi added to your trip!')">Add to Trip</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Budget page Created by kartik raval-->
+
+<section id="budget" class="page">
+  <div class="budget">
+
+    <div class="card">
+      <h2>Trip Budget</h2>
+      <div class="big-number">₹32,500</div>
+      <p style="color:var(--muted)">Estimated total · 7 days</p>
+
+      <div class="legend"><span>Transport</span><b>₹7,500</b></div>
+      <div class="bar"><span style="width:55%"></span></div>
+
+      <div class="legend"><span>Stay</span><b>₹12,000</b></div>
+      <div class="bar"><span style="width:72%"></span></div>
+
+      <div class="legend"><span>Activities</span><b>₹6,500</b></div>
+      <div class="bar"><span style="width:42%"></span></div>
+
+      <div class="legend"><span>Meals</span><b>₹6,500</b></div>
+      <div class="bar"><span style="width:42%"></span></div>
+    </div>
+
+    <div class="card">
+      <h2>Budget Health</h2>
+      <div style="font-size:62px;text-align:center;margin:20px">🟢</div>
+      <h3 style="text-align:center">You're on track!</h3>
+      <p style="text-align:center;color:var(--muted)">
+        Average daily spend: <b>₹4,643</b><br>
+        Recommended daily limit: ₹5,000
+      </p>
+      <button class="btn primary" style="width:100%" onclick="toast('Budget optimized — ₹2,300 potential savings found!')">Optimize Budget</button>
+    </div>
+
+  </div>
+</section>
+
+<!--Share Trip page Created by kartik raval-->
+
+<section id="share" class="page">
+  <div class="card share">
+    <h2>Share Your Itinerary</h2>
+    <p style="color:var(--muted)">Create a public, read-only link so friends can view or copy your trip.</p>
+
+    <div style="display:flex;gap:10px;max-width:700px">
+      <input id="shareLink" class="search" value="globetrotter.app/trip/royal-rajasthan" readonly>
+      <button class="btn primary" onclick="copyLink()">Copy Link</button>
+    </div>
+
+    <div style="margin-top:28px">
+      <button class="btn light" onclick="toast('Share dialog opened!')">↗️ Share on Social</button>
+      <button class="btn light" onclick="toast('Trip duplicated to your account!')">Copy Trip</button>
+    </div>
+  </div>
+</section>
+<script src="script.js"></script>
+
 </body>
 </html>
