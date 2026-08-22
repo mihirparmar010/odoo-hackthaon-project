@@ -1,6 +1,772 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="GlobeTrotter - Next-gen travel itinerary planner, city discovery and budget tracking platform.">
+    <title>GlobeTrotter — Smart Travel Planner & Itinerary Builder</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- App Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Background Ambient Lighting -->
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
+    <div class="ambient-glow glow-3"></div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+    <!-- Top Navigation Header -->
+    <header class="site-header">
+        <div class="header-container">
+            <div class="brand-wrapper" id="brand-logo" role="button" tabindex="0">
+                <div class="brand-icon">
+                    <i class="fa-solid fa-earth-americas"></i>
+                </div>
+                <div class="brand-text">
+                    <span class="brand-title">Globe<span>Trotter</span></span>
+                    <span class="brand-tag">Travel Studio</span>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="nav-menu" id="nav-menu">
+                <button class="nav-link active" data-tab="dashboard" id="nav-dashboard">
+                    <i class="fa-solid fa-compass"></i>
+                    <span>Dashboard</span>
+                </button>
+                <button class="nav-link" data-tab="explore" id="nav-explore">
+                    <i class="fa-solid fa-map-location-dot"></i>
+                    <span>Explore Cities</span>
+                </button>
+                <button class="nav-link" data-tab="trips" id="nav-trips">
+                    <i class="fa-solid fa-route"></i>
+                    <span>My Trips</span>
+                </button>
+                <button class="nav-link" data-tab="public-trips" id="nav-public-trips">
+                    <i class="fa-solid fa-share-nodes"></i>
+                    <span>Shared Trips</span>
+                </button>
+            </nav>
+
+            <!-- Header Right Controls -->
+            <div class="header-actions">
+                <!-- Backend Connection Pill -->
+                <button class="api-status-pill" id="api-status-btn" title="Backend Connection Status - Click to configure">
+                    <span class="status-dot offline" id="status-dot"></span>
+                    <span class="status-label" id="status-label">Checking...</span>
+                </button>
+
+                <!-- Guest State Controls (Logged Out) -->
+                <div class="auth-guest-controls" id="auth-guest-controls">
+                    <button class="btn btn-ghost" id="login-modal-open-btn">
+                        <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                        <span>Log In</span>
+                    </button>
+                    <button class="btn btn-primary" id="signup-modal-open-btn">
+                        <i class="fa-solid fa-user-plus"></i>
+                        <span>Get Started</span>
+                    </button>
+                </div>
+
+                <!-- User State Controls (Logged In) -->
+                <div class="auth-user-controls hidden" id="auth-user-controls">
+                    <button class="btn btn-accent" id="create-trip-nav-btn">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>New Trip</span>
+                    </button>
+                    <div class="user-profile-badge" id="user-profile-menu-btn">
+                        <div class="user-avatar" id="user-avatar-initials">U</div>
+                        <div class="user-info-text">
+                            <span class="user-name" id="nav-user-name">User</span>
+                            <span class="user-role">Explorer</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-icon-ghost" id="logout-btn" title="Sign out of GlobeTrotter">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Application Workspace -->
+    <main class="main-workspace" id="main-workspace">
+
+        <!-- ================= VIEW 1: DASHBOARD ================= -->
+        <section class="app-view active" id="view-dashboard">
+            <!-- Hero Banner -->
+            <div class="dashboard-hero-card">
+                <div class="hero-content">
+                    <div class="hero-badge">
+                        <i class="fa-solid fa-sparkles"></i>
+                        <span>Smart Itinerary & Trip Planner</span>
+                    </div>
+                    <h1 class="hero-heading" id="dashboard-welcome-heading">Plan Your Next Great Adventure</h1>
+                    <p class="hero-subtext">Discover vibrant cities, organize day-by-day stops and activities, and track every single expense in real-time with GlobeTrotter.</p>
+                    <div class="hero-actions">
+                        <button class="btn btn-primary btn-lg" id="hero-create-trip-btn">
+                            <i class="fa-solid fa-route"></i>
+                            <span>Create New Itinerary</span>
+                        </button>
+                        <button class="btn btn-secondary btn-lg" id="hero-explore-btn">
+                            <i class="fa-solid fa-compass"></i>
+                            <span>Explore Destinations</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="hero-stats-panel" id="hero-stats-panel">
+                    <div class="stat-box">
+                        <div class="stat-icon-wrapper sky">
+                            <i class="fa-solid fa-plane-departure"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="stat-total-trips">0</span>
+                            <span class="stat-label">My Trips</span>
+                        </div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-icon-wrapper emerald">
+                            <i class="fa-solid fa-city"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="stat-destinations-count">12+</span>
+                            <span class="stat-label">Destinations</span>
+                        </div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-icon-wrapper amber">
+                            <i class="fa-solid fa-ticket"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="stat-activities-count">35+</span>
+                            <span class="stat-label">Activities</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Access / Featured Trips Section -->
+            <div class="dashboard-section">
+                <div class="section-header">
+                    <div class="section-title-group">
+                        <h2>Your Active Trips</h2>
+                        <p class="section-subtitle">Upcoming itineraries and journeys in progress</p>
+                    </div>
+                    <button class="btn btn-ghost btn-sm" id="view-all-trips-btn">
+                        <span>View All Trips</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+                <div class="trips-grid" id="dashboard-trips-grid">
+                    <!-- Dynamic Trip Cards Rendered Here -->
+                </div>
+            </div>
+
+            <!-- Recommended Cities Section -->
+            <div class="dashboard-section">
+                <div class="section-header">
+                    <div class="section-title-group">
+                        <h2>Trending Destinations</h2>
+                        <p class="section-subtitle">Top-rated cities with curated activity catalogs</p>
+                    </div>
+                    <button class="btn btn-ghost btn-sm" id="view-all-cities-btn">
+                        <span>Search Catalog</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+                <div class="cities-grid" id="dashboard-cities-grid">
+                    <!-- Dynamic City Cards Rendered Here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= VIEW 2: EXPLORE CITIES & ACTIVITIES ================= -->
+        <section class="app-view" id="view-explore">
+            <div class="view-header-bar">
+                <div>
+                    <h2>Destination & Activity Explorer</h2>
+                    <p class="section-subtitle">Browse discoverable cities, cost indexes, and local experiences</p>
+                </div>
+            </div>
+
+            <!-- Filters Bar -->
+            <div class="filter-card">
+                <div class="filter-search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="city-search-input" placeholder="Search cities or activities (e.g. Paris, Tokyo, Food, Museum)...">
+                    <button class="btn-clear hidden" id="city-search-clear"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="filter-controls-row">
+                    <div class="filter-group">
+                        <label for="filter-country"><i class="fa-solid fa-globe"></i> Country</label>
+                        <select id="filter-country" class="form-select">
+                            <option value="">All Countries</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="filter-region"><i class="fa-solid fa-earth-americas"></i> Region</label>
+                        <select id="filter-region" class="form-select">
+                            <option value="">All Regions</option>
+                            <option value="Europe">Europe</option>
+                            <option value="Asia">Asia</option>
+                            <option value="North America">North America</option>
+                            <option value="Middle East">Middle East</option>
+                            <option value="Africa">Africa</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="filter-cost"><i class="fa-solid fa-wallet"></i> Max Cost Index: <span id="cost-val-label">100</span></label>
+                        <input type="range" id="filter-cost" min="10" max="100" value="100" class="form-range">
+                    </div>
+                    <div class="filter-actions">
+                        <button class="btn btn-secondary btn-sm" id="reset-filters-btn">
+                            <i class="fa-solid fa-rotate-left"></i>
+                            <span>Reset</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cities Explorer Results -->
+            <div class="cities-grid" id="explore-cities-grid">
+                <!-- Dynamically Populated -->
+            </div>
+        </section>
+
+        <!-- ================= VIEW 3: MY TRIPS ================= -->
+        <section class="app-view" id="view-trips">
+            <div class="view-header-bar">
+                <div>
+                    <h2>My Travel Itineraries</h2>
+                    <p class="section-subtitle">Manage your custom journeys, add stops, schedule activities, and track budgets</p>
+                </div>
+                <button class="btn btn-primary" id="btn-create-trip-main">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>Create New Trip</span>
+                </button>
+            </div>
+
+            <div id="trips-auth-gate" class="auth-gate-banner hidden">
+                <div class="gate-icon"><i class="fa-solid fa-lock"></i></div>
+                <h3>Sign in to manage your trips</h3>
+                <p>Log in with your GlobeTrotter account or sign up to create and customize personalized travel itineraries.</p>
+                <div class="gate-buttons">
+                    <button class="btn btn-primary" id="gate-login-btn">Log In</button>
+                    <button class="btn btn-secondary" id="gate-signup-btn">Create Account</button>
+                </div>
+            </div>
+
+            <div class="trips-grid" id="my-trips-grid">
+                <!-- Dynamic Trips List -->
+            </div>
+        </section>
+
+        <!-- ================= VIEW 4: TRIP DETAIL & ITINERARY BUILDER ================= -->
+        <section class="app-view" id="view-trip-detail">
+            <!-- Breadcrumbs / Back Bar -->
+            <div class="back-bar">
+                <button class="btn btn-ghost btn-sm" id="back-to-trips-btn">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span>Back to Trips</span>
+                </button>
+                <div class="trip-quick-actions">
+                    <button class="btn btn-secondary btn-sm" id="btn-view-budget">
+                        <i class="fa-solid fa-chart-pie"></i>
+                        <span>Budget & Cost Breakdown</span>
+                    </button>
+                    <button class="btn btn-ghost btn-sm" id="btn-share-trip">
+                        <i class="fa-solid fa-share-nodes"></i>
+                        <span id="share-trip-btn-text">Share Link</span>
+                    </button>
+                    <button class="btn btn-danger-ghost btn-sm" id="btn-delete-current-trip">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Trip Header Card -->
+            <div class="trip-detail-hero" id="trip-detail-hero">
+                <div class="trip-hero-overlay"></div>
+                <div class="trip-hero-content">
+                    <div class="trip-status-pills">
+                        <span class="badge badge-sky" id="trip-hero-visibility"><i class="fa-solid fa-lock"></i> Private</span>
+                        <span class="badge badge-indigo" id="trip-hero-stops-count"><i class="fa-solid fa-location-dot"></i> 0 Stops</span>
+                    </div>
+                    <h1 class="trip-hero-title" id="trip-hero-title">Trip Title</h1>
+                    <p class="trip-hero-desc" id="trip-hero-desc">Trip description</p>
+                    <div class="trip-hero-meta">
+                        <span><i class="fa-regular fa-calendar"></i> <span id="trip-hero-dates">Flexible Dates</span></span>
+                        <span><i class="fa-solid fa-coins"></i> Total Budget: <strong id="trip-hero-total-budget">$0</strong></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Itinerary Stops Workspace -->
+            <div class="itinerary-workspace">
+                <div class="itinerary-header">
+                    <div>
+                        <h3>Trip Itinerary & Stops</h3>
+                        <p class="section-subtitle">Chronological destinations, stays, and scheduled activities</p>
+                    </div>
+                    <button class="btn btn-primary btn-sm" id="btn-add-stop">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>Add Destination Stop</span>
+                    </button>
+                </div>
+
+                <div class="stops-timeline" id="stops-timeline">
+                    <!-- Stops Rendered Here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= VIEW 5: BUDGET & COST BREAKDOWN ================= -->
+        <section class="app-view" id="view-budget">
+            <div class="back-bar">
+                <button class="btn btn-ghost btn-sm" id="back-to-trip-from-budget">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span>Back to Itinerary</span>
+                </button>
+            </div>
+
+            <div class="view-header-bar">
+                <div>
+                    <h2>Budget & Expense Analytics</h2>
+                    <p class="section-subtitle" id="budget-trip-subtitle">Cost breakdown for your trip</p>
+                </div>
+            </div>
+
+            <!-- Budget Overview Stats -->
+            <div class="budget-stat-grid" id="budget-stat-grid">
+                <div class="budget-card primary">
+                    <span class="budget-card-title">Total Estimated Cost</span>
+                    <span class="budget-card-value" id="budget-total-cost">$0</span>
+                    <span class="budget-card-sub" id="budget-days-count">0 Days</span>
+                </div>
+                <div class="budget-card">
+                    <span class="budget-card-title"><i class="fa-solid fa-plane"></i> Transport</span>
+                    <span class="budget-card-value" id="budget-transport-cost">$0</span>
+                </div>
+                <div class="budget-card">
+                    <span class="budget-card-title"><i class="fa-solid fa-hotel"></i> Stays & Hotels</span>
+                    <span class="budget-card-value" id="budget-stay-cost">$0</span>
+                </div>
+                <div class="budget-card">
+                    <span class="budget-card-title"><i class="fa-solid fa-utensils"></i> Meals & Dining</span>
+                    <span class="budget-card-value" id="budget-meals-cost">$0</span>
+                </div>
+                <div class="budget-card">
+                    <span class="budget-card-title"><i class="fa-solid fa-ticket"></i> Activities & Tours</span>
+                    <span class="budget-card-value" id="budget-activities-cost">$0</span>
+                </div>
+                <div class="budget-card accent">
+                    <span class="budget-card-title"><i class="fa-solid fa-calculator"></i> Daily Average</span>
+                    <span class="budget-card-value" id="budget-daily-avg">$0</span>
+                </div>
+            </div>
+
+            <!-- Daily Budget Limit Tester -->
+            <div class="budget-threshold-card">
+                <div class="threshold-header">
+                    <div>
+                        <h4><i class="fa-solid fa-sliders"></i> Daily Budget Limit Checker</h4>
+                        <p class="section-subtitle">Set your target daily budget limit to detect over-budget days</p>
+                    </div>
+                    <div class="threshold-input-group">
+                        <span class="input-prefix">$</span>
+                        <input type="number" id="daily-limit-input" placeholder="e.g. 150" min="0" step="10">
+                        <button class="btn btn-primary btn-sm" id="check-budget-limit-btn">Calculate</button>
+                    </div>
+                </div>
+                <div id="over-budget-report" class="over-budget-report hidden">
+                    <!-- Over budget alert days -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= VIEW 6: SHARED & PUBLIC TRIPS ================= -->
+        <section class="app-view" id="view-public-trips">
+            <div class="view-header-bar">
+                <div>
+                    <h2>Public & Shared Itineraries</h2>
+                    <p class="section-subtitle">Explore trips shared by other travelers or look up an itinerary token</p>
+                </div>
+            </div>
+
+            <div class="share-lookup-card">
+                <div class="share-lookup-input-group">
+                    <i class="fa-solid fa-key"></i>
+                    <input type="text" id="share-token-input" placeholder="Enter trip share token (e.g. 7a3f89e21...)...">
+                    <button class="btn btn-primary" id="lookup-share-token-btn">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <span>View Trip</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="public-trip-preview" class="public-trip-preview hidden">
+                <!-- Public Trip Content Rendered Here -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ================= MODAL: LOGIN ================= -->
+    <div class="modal-backdrop hidden" id="modal-login" role="dialog" aria-modal="true">
+        <div class="modal-card">
+            <button class="modal-close-btn" data-close="modal-login" aria-label="Close modal">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="modal-header">
+                <div class="modal-icon-badge sky">
+                    <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                </div>
+                <h3>Welcome Back</h3>
+                <p>Log in to access your GlobeTrotter trips & itineraries</p>
+            </div>
+            
+            <form id="login-form" class="modal-form">
+                <div class="form-alert hidden" id="login-error-alert"></div>
+
+                <div class="form-field">
+                    <label for="login-email">Email Address</label>
+                    <div class="input-with-icon">
+                        <i class="fa-regular fa-envelope"></i>
+                        <input type="email" id="login-email" required placeholder="traveler@example.com" autocomplete="email">
+                    </div>
+                </div>
+
+                <div class="form-field">
+                    <label for="login-password">Password</label>
+                    <div class="input-with-icon">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="login-password" required placeholder="••••••••" autocomplete="current-password">
+                        <button type="button" class="btn-toggle-password" data-target="login-password">
+                            <i class="fa-regular fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block btn-lg" id="login-submit-btn">
+                    <span class="btn-text">Sign In</span>
+                    <span class="btn-spinner hidden"><i class="fa-solid fa-spinner fa-spin"></i></span>
+                </button>
+
+                <!-- Quick Test Button -->
+                <button type="button" class="btn btn-secondary btn-block btn-sm" id="quick-demo-login-btn">
+                    <i class="fa-solid fa-bolt"></i>
+                    <span>Use Demo Account (traveler@example.com)</span>
+                </button>
+
+                <div class="modal-footer-switch">
+                    <span>Don't have an account?</span>
+                    <button type="button" class="link-btn" id="switch-to-signup">Sign up for free</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ================= MODAL: SIGN UP ================= -->
+    <div class="modal-backdrop hidden" id="modal-signup" role="dialog" aria-modal="true">
+        <div class="modal-card">
+            <button class="modal-close-btn" data-close="modal-signup" aria-label="Close modal">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="modal-header">
+                <div class="modal-icon-badge emerald">
+                    <i class="fa-solid fa-user-plus"></i>
+                </div>
+                <h3>Create Account</h3>
+                <p>Join GlobeTrotter to plan unlimited journeys</p>
+            </div>
+            
+            <form id="signup-form" class="modal-form">
+                <div class="form-alert hidden" id="signup-error-alert"></div>
+
+                <div class="form-field">
+                    <label for="signup-name">Full Name</label>
+                    <div class="input-with-icon">
+                        <i class="fa-regular fa-user"></i>
+                        <input type="text" id="signup-name" required placeholder="Alex Explorer" autocomplete="name">
+                    </div>
+                </div>
+
+                <div class="form-field">
+                    <label for="signup-email">Email Address</label>
+                    <div class="input-with-icon">
+                        <i class="fa-regular fa-envelope"></i>
+                        <input type="email" id="signup-email" required placeholder="alex@example.com" autocomplete="email">
+                    </div>
+                </div>
+
+                <div class="form-field">
+                    <label for="signup-password">Password (min 6 characters)</label>
+                    <div class="input-with-icon">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="signup-password" required minlength="6" placeholder="Create a secure password" autocomplete="new-password">
+                        <button type="button" class="btn-toggle-password" data-target="signup-password">
+                            <i class="fa-regular fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block btn-lg" id="signup-submit-btn">
+                    <span class="btn-text">Create Account</span>
+                    <span class="btn-spinner hidden"><i class="fa-solid fa-spinner fa-spin"></i></span>
+                </button>
+
+                <div class="modal-footer-switch">
+                    <span>Already have an account?</span>
+                    <button type="button" class="link-btn" id="switch-to-login">Log In</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ================= MODAL: CREATE TRIP ================= -->
+    <div class="modal-backdrop hidden" id="modal-create-trip" role="dialog" aria-modal="true">
+        <div class="modal-card">
+            <button class="modal-close-btn" data-close="modal-create-trip" aria-label="Close modal">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="modal-header">
+                <div class="modal-icon-badge indigo">
+                    <i class="fa-solid fa-route"></i>
+                </div>
+                <h3>Create New Itinerary</h3>
+                <p>Start a new journey and add destination stops</p>
+            </div>
+            
+            <form id="create-trip-form" class="modal-form">
+                <div class="form-field">
+                    <label for="trip-name">Trip Name *</label>
+                    <input type="text" id="trip-name" required placeholder="e.g. Summer in Southern Europe, Tokyo Explorer">
+                </div>
+
+                <div class="form-field">
+                    <label for="trip-description">Description / Notes</label>
+                    <textarea id="trip-description" rows="3" placeholder="Brief notes about the itinerary, travel goals, companions..."></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="trip-start-date">Start Date</label>
+                        <input type="date" id="trip-start-date">
+                    </div>
+                    <div class="form-field">
+                        <label for="trip-end-date">End Date</label>
+                        <input type="date" id="trip-end-date">
+                    </div>
+                </div>
+
+                <div class="form-field">
+                    <label for="trip-cover-photo">Cover Photo URL</label>
+                    <input type="url" id="trip-cover-photo" placeholder="https://images.unsplash.com/photo-...">
+                    <div class="preset-covers">
+                        <span>Presets:</span>
+                        <button type="button" class="preset-chip" data-img="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800">Paris</button>
+                        <button type="button" class="preset-chip" data-img="https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=800">Tokyo</button>
+                        <button type="button" class="preset-chip" data-img="https://images.unsplash.com/photo-1534447677768-be436bb09401?w=800">Bali</button>
+                        <button type="button" class="preset-chip" data-img="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800">Dubai</button>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block btn-lg" id="submit-trip-btn">
+                    <span>Create Trip</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ================= MODAL: ADD STOP ================= -->
+    <div class="modal-backdrop hidden" id="modal-add-stop" role="dialog" aria-modal="true">
+        <div class="modal-card">
+            <button class="modal-close-btn" data-close="modal-add-stop" aria-label="Close modal">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="modal-header">
+                <div class="modal-icon-badge sky">
+                    <i class="fa-solid fa-location-dot"></i>
+                </div>
+                <h3>Add Stop to Trip</h3>
+                <p>Select a destination city and set dates and cost estimates</p>
+            </div>
+            
+            <form id="add-stop-form" class="modal-form">
+                <div class="form-field">
+                    <label for="stop-city-select">Select Destination City *</label>
+                    <select id="stop-city-select" required class="form-select">
+                        <option value="">Loading cities...</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="stop-start-date">Arrival Date</label>
+                        <input type="date" id="stop-start-date">
+                    </div>
+                    <div class="form-field">
+                        <label for="stop-end-date">Departure Date</label>
+                        <input type="date" id="stop-end-date">
+                    </div>
+                </div>
+
+                <div class="form-row three-col">
+                    <div class="form-field">
+                        <label for="stop-transport-cost">Transport ($)</label>
+                        <input type="number" id="stop-transport-cost" min="0" step="1" value="0">
+                    </div>
+                    <div class="form-field">
+                        <label for="stop-stay-cost">Stay/Hotel ($)</label>
+                        <input type="number" id="stop-stay-cost" min="0" step="1" value="0">
+                    </div>
+                    <div class="form-field">
+                        <label for="stop-meals-cost">Meals ($)</label>
+                        <input type="number" id="stop-meals-cost" min="0" step="1" value="0">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block btn-lg" id="submit-stop-btn">
+                    <span>Add Stop to Itinerary</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ================= MODAL: ADD ACTIVITY ================= -->
+    <div class="modal-backdrop hidden" id="modal-add-activity" role="dialog" aria-modal="true">
+        <div class="modal-card">
+            <button class="modal-close-btn" data-close="modal-add-activity" aria-label="Close modal">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="modal-header">
+                <div class="modal-icon-badge amber">
+                    <i class="fa-solid fa-ticket"></i>
+                </div>
+                <h3>Add Activity</h3>
+                <p id="add-activity-stop-subtitle">Schedule an experience for this stop</p>
+            </div>
+            
+            <form id="add-activity-form" class="modal-form">
+                <input type="hidden" id="activity-stop-id">
+
+                <div class="form-field">
+                    <label for="activity-catalog-select">Pick from City Catalog</label>
+                    <select id="activity-catalog-select" class="form-select">
+                        <option value="">-- Custom Activity / Manual Entry --</option>
+                    </select>
+                </div>
+
+                <div class="form-field">
+                    <label for="activity-name">Activity Name *</label>
+                    <input type="text" id="activity-name" required placeholder="e.g. Louvre Museum Visit, Sushi Tasting">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="activity-cost">Cost ($)</label>
+                        <input type="number" id="activity-cost" min="0" step="0.5" value="0">
+                    </div>
+                    <div class="form-field">
+                        <label for="activity-date">Date</label>
+                        <input type="date" id="activity-date">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="activity-time">Time of Day</label>
+                        <input type="text" id="activity-time" placeholder="e.g. 10:00 AM, Evening">
+                    </div>
+                    <div class="form-field">
+                        <label for="activity-notes">Notes / Booking ref</label>
+                        <input type="text" id="activity-notes" placeholder="e.g. Pre-booked tickets on Viator">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block btn-lg" id="submit-activity-btn">
+                    <span>Add Activity</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ================= MODAL: CITY ACTIVITIES CATALOG ================= -->
+    <div class="modal-backdrop hidden" id="modal-city-activities" role="dialog" aria-modal="true">
+        <div class="modal-card modal-lg">
+            <button class="modal-close-btn" data-close="modal-city-activities" aria-label="Close modal">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="modal-header">
+                <div class="modal-icon-badge emerald">
+                    <i class="fa-solid fa-monument"></i>
+                </div>
+                <h3 id="city-modal-title">City Experiences</h3>
+                <p id="city-modal-subtitle">Curated attractions and activities</p>
+            </div>
+            
+            <div class="city-activities-list" id="city-modal-activities-list">
+                <!-- Dynamically loaded activities -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MODAL: API SETTINGS ================= -->
+    <div class="modal-backdrop hidden" id="modal-api-settings" role="dialog" aria-modal="true">
+        <div class="modal-card">
+            <button class="modal-close-btn" data-close="modal-api-settings" aria-label="Close modal">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="modal-header">
+                <div class="modal-icon-badge sky">
+                    <i class="fa-solid fa-server"></i>
+                </div>
+                <h3>Backend API Settings</h3>
+                <p>Configure the GlobeTrotter FastAPI server endpoint</p>
+            </div>
+            
+            <form id="api-settings-form" class="modal-form">
+                <div class="form-field">
+                    <label for="api-base-url">FastAPI Backend URL</label>
+                    <input type="url" id="api-base-url" required value="http://127.0.0.1:8000" placeholder="http://127.0.0.1:8000">
+                    <span class="field-hint">Default local development server: <code>http://127.0.0.1:8000</code></span>
+                </div>
+
+                <div class="api-diagnostic-box" id="api-diagnostic-box">
+                    <div class="diag-item">
+                        <span>Current Status:</span>
+                        <strong id="diag-status-text">Testing...</strong>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <button type="button" class="btn btn-secondary" id="btn-test-api">
+                        <i class="fa-solid fa-arrows-rotate"></i>
+                        <span>Test Connection</span>
+                    </button>
+                    <button type="submit" class="btn btn-primary" id="btn-save-api">
+                        <span>Save & Apply</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- App JavaScript Logic -->
+    <script src="script.js"></script>
+=======
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GlobeTrotter — Smart Travel Planner</title>
@@ -391,6 +1157,6 @@
 <div class="toast" id="toast"></div>
 <div class="modal" id="modal"><div class="modal-box"><button class="close" onclick="closeModal()">×</button><h2>Trip Created 🎉</h2><p>Your trip has been saved. The demo will now open the itinerary builder.</p><button class="btn primary" onclick="closeModal();showPage('itinerary')">Open Itinerary</button></div></div>
 <script src="script.js"></script>
->>>>>>> 47bcdebc63ad735dfc9fc24a4aeeb4983328d4e6
+> main
 </body>
 </html>
