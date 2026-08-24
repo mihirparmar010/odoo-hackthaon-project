@@ -251,10 +251,15 @@ def get_budget(
     )
     per_day_avg = total / days if days else 0
 
+    budget_limit = trip.budget_limit or 0
+    # Fall back to spreading the trip's overall limit evenly across days
+    # if the caller didn't pass an explicit daily_limit.
+    effective_daily_limit = daily_limit or (budget_limit / days if budget_limit and days else 0)
+
     over_budget_days = []
-    if daily_limit > 0:
+    if effective_daily_limit > 0:
         over_budget_days = [
-            d.isoformat() for d, cost in daily_totals.items() if cost > daily_limit
+            d.isoformat() for d, cost in daily_totals.items() if cost > effective_daily_limit
         ]
 
     return schemas.BudgetBreakdown(
@@ -265,5 +270,8 @@ def get_budget(
         activities=round(activities_cost, 2),
         per_day_average=round(per_day_avg, 2),
         days=days,
+        budget_limit=round(budget_limit, 2),
+        remaining=round(budget_limit - total, 2),
+        is_over_budget=bool(budget_limit > 0 and total > budget_limit),
         over_budget_days=sorted(over_budget_days),
     )

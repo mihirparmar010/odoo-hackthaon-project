@@ -66,6 +66,7 @@ class Trip(Base):
     start_date = Column(Date)
     end_date = Column(Date)
     cover_photo = Column(String, default="")
+    budget_limit = Column(Float, default=0)
     is_public = Column(Boolean, default=False)
     share_token = Column(String, unique=True, index=True, default=gen_token)
     created_at = Column(DateTime, default=datetime.utcnow)

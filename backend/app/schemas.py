@@ -64,6 +64,7 @@ class TripCreate(BaseModel):
     start_date: Optional[date] = None
     end_date: Optional[date] = None
     cover_photo: Optional[str] = ""
+    budget_limit: Optional[float] = 0
 
 
 class TripUpdate(BaseModel):
@@ -72,6 +73,7 @@ class TripUpdate(BaseModel):
     start_date: Optional[date] = None
     end_date: Optional[date] = None
     cover_photo: Optional[str] = None
+    budget_limit: Optional[float] = None
     is_public: Optional[bool] = None
 
 
@@ -83,6 +85,7 @@ class TripOut(BaseModel):
     start_date: Optional[date]
     end_date: Optional[date]
     cover_photo: str
+    budget_limit: float
     is_public: bool
     share_token: str
     created_at: datetime
@@ -159,4 +162,7 @@ class BudgetBreakdown(BaseModel):
     activities: float
     per_day_average: float
     days: int
+    budget_limit: float
+    remaining: float
+    is_over_budget: bool
     over_budget_days: List[str] = []

@@ -132,6 +132,7 @@ function buildAuthOverlay() {
       setToken(data.access_token);
       overlay.remove();
       toast(`Welcome, ${data.user.name}!`);
+      updateUserBadge(data.user);
       if (authResolve) { authResolve(); authResolve = null; }
     } catch (_) {
       msg.textContent = 'Could not reach the server. Is the backend running?';
@@ -150,8 +151,60 @@ function showAuthOverlay(message = '') {
 }
 
 async function ensureAuth() {
-  if (getToken()) return;
+  if (getToken()) {
+    // Token already exists from a previous session — fetch the user's
+    // own info so the topbar shows their real name, not a stale one.
+    try {
+      const me = await apiFetch('/auth/me');
+      updateUserBadge(me);
+    } catch (_) { /* apiFetch handles re-auth on 401 */ }
+    return;
+  }
   await showAuthOverlay();
+}
+
+/* ============ USER BADGE (topbar) ============ */
+function updateUserBadge(user) {
+  const greeting = document.getElementById('userGreeting');
+  const avatar = document.getElementById('userAvatar');
+  const menuName = document.getElementById('userMenuName');
+  const menuEmail = document.getElementById('userMenuEmail');
+
+  if (greeting) greeting.textContent = `Hi, ${user.name} 👋`;
+  if (avatar) avatar.textContent = (user.name || '?').charAt(0).toUpperCase();
+  if (menuName) menuName.textContent = user.name;
+  if (menuEmail) menuEmail.textContent = user.email;
+}
+
+function toggleUserMenu() {
+  const menu = document.getElementById('userMenu');
+  if (!menu) return;
+  menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+}
+
+document.addEventListener('click', (e) => {
+  const menu = document.getElementById('userMenu');
+  const avatar = document.getElementById('userAvatar');
+  if (!menu || menu.style.display !== 'block') return;
+  if (!menu.contains(e.target) && e.target !== avatar) {
+    menu.style.display = 'none';
+  }
+});
+
+function logout() {
+  clearToken();
+  localStorage.removeItem('gt_currentTripId');
+  currentTripId = null;
+  toast('Logged out');
+  const menu = document.getElementById('userMenu');
+  if (menu) menu.style.display = 'none';
+  showAuthOverlay().then(async () => {
+    try {
+      const me = await apiFetch('/auth/me');
+      updateUserBadge(me);
+    } catch (_) {}
+    loadDashboard();
+  });
 }
 
 
@@ -200,7 +253,7 @@ async function loadDashboard() {
     if (tripGrid) {
       tripGrid.innerHTML = data.upcoming_trips.map(t => `
         <div class="trip">
-          <div class="trip-img"></div>
+          ${cityImgHtml(t.name, 'trip-img')}
           <div class="trip-body">
             <b>${t.name}</b>
             <small>${t.start_date || 'TBD'} – ${t.end_date || 'TBD'}</small>
@@ -213,7 +266,7 @@ async function loadDashboard() {
     if (destGrid) {
       destGrid.innerHTML = data.recommended_destinations.map(c => `
         <div class="destination">
-          <div class="dest-img"></div>
+          ${cityImgHtml(c.name, 'dest-img')}
           <div><b>${c.name}, ${c.country}</b></div>
         </div>
       `).join('');
@@ -267,6 +320,7 @@ async function createTrip() {
   const startDate = document.getElementById('startDate').value || null;
   const endDate = document.getElementById('endDate').value || null;
   const description = document.getElementById('tripDesc')?.value.trim() || "";
+  const budgetLimit = parseFloat(document.getElementById('budgetInput')?.value) || 0;
 
   if (!tripName) {
     toast('Please enter a trip name');
@@ -281,6 +335,7 @@ async function createTrip() {
         description,
         start_date: startDate,
         end_date: endDate,
+        budget_limit: budgetLimit,
       }),
     });
     currentTripId = trip.id;
@@ -315,7 +370,13 @@ async function loadTrips() {
 
     tbody.innerHTML = trips.map((t, i) => {
       const cityCount = details[i] ? details[i].stops.length : '—';
-      const budget = budgets[i] ? `₹${budgets[i].total.toLocaleString()}` : '—';
+      const bd = budgets[i];
+      let budget = '—';
+      if (bd) {
+        budget = `₹${bd.total.toLocaleString()}`;
+        if (bd.is_over_budget) budget += ' <span style="color:#e85e42;font-weight:700">⚠ over</span>';
+        else if (bd.budget_limit > 0) budget += ` / ₹${bd.budget_limit.toLocaleString()}`;
+      }
       return `
         <tr style="cursor:pointer" onclick="selectTrip(${t.id})">
           <td><b>${t.name}</b></td>
@@ -364,6 +425,7 @@ async function loadItinerary() {
               <span class="cost">₹${act.cost}</span>
             </div>
           `).join('') || '<div class="event"><div><i>No activities added yet</i></div></div>'}
+          <button class="btn light" style="margin-top:10px;padding:8px 14px;font-size:13px" onclick="openActivityPicker(${stop.id}, ${stop.city.id}, '${stop.city.name.replace(/'/g, "\\'")}')">+ Add Activity</button>
         </div>
       `).join('') || '<p style="color:var(--muted)">No stops yet. Add one from Explore Cities.</p>';
     }
@@ -381,6 +443,72 @@ async function addStopToTrip(cityId) {
       body: JSON.stringify({ city_id: cityId }),
     });
     toast("City added to your trip!");
+  } catch (_) { /* apiFetch already toasts the error */ }
+}
+
+/* ============ ACTIVITY PICKER ============ */
+async function openActivityPicker(stopId, cityId, cityName) {
+  let overlay = document.getElementById('activityOverlay');
+  if (overlay) overlay.remove();
+
+  overlay = document.createElement('div');
+  overlay.id = 'activityOverlay';
+  overlay.className = 'modal open';
+  overlay.innerHTML = `
+    <div class="modal-box">
+      <button class="close" onclick="document.getElementById('activityOverlay').remove()">×</button>
+      <h2>Add Activity · ${cityName}</h2>
+      <div id="activityCatalogList" style="max-height:260px;overflow-y:auto;margin:14px 0">Loading…</div>
+
+      <h3 style="margin-top:18px">Or add a custom activity</h3>
+      <div class="field full" style="margin:10px 0">
+        <label>Name</label>
+        <input id="customActName" placeholder="e.g. Sunset boat ride">
+      </div>
+      <div class="field full" style="margin-bottom:12px">
+        <label>Cost (₹)</label>
+        <input id="customActCost" type="number" placeholder="0">
+      </div>
+      <button class="btn primary" style="width:100%" onclick="addActivityToStop(${stopId}, null, document.getElementById('customActName').value, document.getElementById('customActCost').value)">Add Custom Activity</button>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  try {
+    const activities = await apiFetch(`/cities/${cityId}/activities`);
+    const list = document.getElementById('activityCatalogList');
+    if (!list) return;
+
+    list.innerHTML = activities.map(a => `
+      <div class="event" style="cursor:pointer" onclick="addActivityToStop(${stopId}, ${a.id})">
+        <div><b>${a.name}</b><small>${a.category} · ${a.duration_hours}h</small></div>
+        <span class="cost">₹${a.cost}</span>
+      </div>
+    `).join('') || '<p style="color:var(--muted)">No catalog activities for this city yet — add a custom one below.</p>';
+  } catch (_) {
+    const list = document.getElementById('activityCatalogList');
+    if (list) list.innerHTML = '<p style="color:var(--muted)">Could not load activities.</p>';
+  }
+}
+
+async function addActivityToStop(stopId, catalogId, customName, customCost) {
+  const body = catalogId
+    ? { activity_catalog_id: catalogId }
+    : { name: customName, cost: customCost ? parseFloat(customCost) : 0 };
+
+  if (!catalogId && !customName) {
+    toast("Enter an activity name");
+    return;
+  }
+
+  try {
+    await apiFetch(`/trips/stops/${stopId}/activities`, {
+      method: "POST",
+      body: JSON.stringify(body),
+    });
+    toast("Activity added!");
+    document.getElementById('activityOverlay')?.remove();
+    loadItinerary();
   } catch (_) { /* apiFetch already toasts the error */ }
 }
 
@@ -403,7 +531,7 @@ async function loadCities(q = "") {
 
     cityList.innerHTML = cities.map(c => `
       <div class="trip">
-        <div class="trip-img"></div>
+        ${cityImgHtml(c.name, 'trip-img')}
         <div class="trip-body">
           <b>${c.name}</b>
           <small>${c.country} · Cost index ${c.cost_index}</small>
@@ -426,6 +554,9 @@ async function loadBudget() {
     const bigNum = document.getElementById('budgetTotal');
     if (bigNum) bigNum.textContent = `₹${b.total.toLocaleString()}`;
 
+    const subtitle = document.getElementById('budgetSubtitle');
+    if (subtitle) subtitle.textContent = `Estimated total · ${b.days} day(s)`;
+
     const setBar = (legendId, barId, value) => {
       const legend = document.getElementById(legendId);
       const bar = document.getElementById(barId);
@@ -439,6 +570,30 @@ async function loadBudget() {
 
     const avgEl = document.getElementById('avgDailySpend');
     if (avgEl) avgEl.textContent = `₹${b.per_day_average.toLocaleString()}`;
+
+    const limitEl = document.getElementById('budgetLimitDisplay');
+    if (limitEl) limitEl.textContent = b.budget_limit > 0 ? `₹${b.budget_limit.toLocaleString()}` : 'Not set';
+
+    const remainingLine = document.getElementById('budgetRemainingLine');
+    const emoji = document.getElementById('budgetHealthEmoji');
+    const title = document.getElementById('budgetHealthTitle');
+
+    if (b.budget_limit > 0) {
+      if (b.is_over_budget) {
+        const overBy = Math.abs(b.remaining);
+        if (remainingLine) remainingLine.innerHTML = `<span style="color:#e85e42;font-weight:700">Over budget by ₹${overBy.toLocaleString()}</span>`;
+        if (emoji) emoji.textContent = '🔴';
+        if (title) { title.textContent = "You're over budget!"; title.style.color = '#e85e42'; }
+      } else {
+        if (remainingLine) remainingLine.textContent = `Remaining: ₹${b.remaining.toLocaleString()}`;
+        if (emoji) emoji.textContent = '🟢';
+        if (title) { title.textContent = "You're on track!"; title.style.color = ''; }
+      }
+    } else {
+      if (remainingLine) remainingLine.textContent = 'Set a budget limit when creating your trip to track this.';
+      if (emoji) emoji.textContent = '⚪';
+      if (title) { title.textContent = 'No budget limit set'; title.style.color = ''; }
+    }
   } catch (_) { /* apiFetch already toasts the error */ }
 }
 
@@ -471,6 +626,16 @@ function toast(msg) {
   toastEl.textContent = msg;
   toastEl.classList.add('show');
   setTimeout(() => toastEl.classList.remove('show'), 2200);
+}
+
+/* ============ IMAGE PLACEHOLDER ============ */
+/* Backend doesn't store city photos, so use a free deterministic photo
+   service (Picsum) keyed on the city/trip name — same name always gets
+   the same photo, and it always loads (no broken-image risk). */
+function cityImgHtml(name, extraClass = 'trip-img') {
+  const seed = encodeURIComponent((name || 'travel').toLowerCase().replace(/\s+/g, '-'));
+  const url = `https://picsum.photos/seed/${seed}/500/350`;
+  return `<div class="${extraClass}" style="background-image:url('${url}');background-size:cover;background-position:center"></div>`;
 }
 
 /* ============ INIT ============ */

@@ -34,7 +34,15 @@
 </aside>
 
 <main class="main">
-<div class="topbar"><h1 id="pageTitle">Dashboard</h1><div class="profile"><span>Hi, Darshan 👋</span><div class="avatar">D</div></div></div>
+<div class="topbar"><h1 id="pageTitle">Dashboard</h1>
+<div class="profile" style="position:relative">
+  <span id="userGreeting">Hi, there 👋</span>
+  <div class="avatar" id="userAvatar" style="cursor:pointer" onclick="toggleUserMenu()">?</div>
+  <div id="userMenu" style="display:none;position:absolute;top:48px;right:0;background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.12);min-width:160px;z-index:50;overflow:hidden">
+    <div style="padding:12px 16px;border-bottom:1px solid var(--line)"><b id="userMenuName">—</b><br><small style="color:var(--muted)" id="userMenuEmail">—</small></div>
+    <button onclick="logout()" style="width:100%;text-align:left;padding:12px 16px;border:none;background:none;cursor:pointer;color:#e85e42;font-weight:600">Log out</button>
+  </div>
+</div></div>
 
 <!--The code of Dashboard written by - DARSHAN  -->
 
@@ -211,41 +219,7 @@
 
     <div id="cityList" class="trip-grid">
 
-      <div class="trip">
-        <div class="trip-img" style="background-image:url('https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=700&q=80')"></div>
-        <div class="trip-body">
-          <b>Jaipur</b>
-          <small>India · Heritage · Cost index 2.1</small>
-          <button class="btn primary" style="margin-top:10px;padding:8px 12px" onclick="toast('Jaipur added to your trip!')">Add to Trip</button>
-        </div>
-      </div>
-
-      <div class="trip">
-        <div class="trip-img" style="background-image:url('https://images.unsplash.com/photo-1566552881560-0be862a7c445?auto=format&fit=crop&w=700&q=80')"></div>
-        <div class="trip-body">
-          <b>Mumbai</b>
-          <small>India · Food & city life · Cost index 2.8</small>
-          <button class="btn primary" style="margin-top:10px;padding:8px 12px" onclick="toast('Mumbai added to your trip!')">Add to Trip</button>
-        </div>
-      </div>
-
-      <div class="trip">
-        <div class="trip-img" style="background-image:url('https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=700&q=80')"></div>
-        <div class="trip-body">
-          <b>Goa</b>
-          <small>India · Beaches · Cost index 2.4</small>
-          <button class="btn primary" style="margin-top:10px;padding:8px 12px" onclick="toast('Goa added to your trip!')">Add to Trip</button>
-        </div>
-      </div>
-
-      <div class="trip">
-        <div class="trip-img" style="background-image:url('https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=700&q=80')"></div>
-        <div class="trip-body">
-          <b>Delhi</b>
-          <small>India · History & food · Cost index 2.0</small>
-          <button class="btn primary" style="margin-top:10px;padding:8px 12px" onclick="toast('Delhi added to your trip!')">Add to Trip</button>
-        </div>
-      </div>
+      <p style="color:var(--muted)">Loading cities…</p>
 
     </div>
   </div>
@@ -259,7 +233,7 @@
 <div class="card">
 <h2>Trip Budget</h2>
 <div class="big-number" id="budgetTotal">₹32,500</div>
-<p style="color:var(--muted)">Estimated total · 7 days</p>
+<p style="color:var(--muted)" id="budgetSubtitle">Estimated total · 7 days</p>
 
 <div class="legend"><span>Transport</span><b id="legendTransport">₹7,500</b></div>
 <div class="bar"><span id="barTransport" style="width:55%"></span></div>
@@ -276,13 +250,14 @@
 
 <div class="card">
 <h2>Budget Health</h2>
-<div style="font-size:62px;text-align:center;margin:20px">🟢</div>
-<h3 style="text-align:center">You're on track!</h3>
+<div style="font-size:62px;text-align:center;margin:20px" id="budgetHealthEmoji">🟢</div>
+<h3 style="text-align:center" id="budgetHealthTitle">You're on track!</h3>
 <p style="text-align:center;color:var(--muted)">
 Average daily spend: <b id="avgDailySpend">₹4,643</b><br>
-Recommended daily limit: ₹5,000
+Your set limit: <b id="budgetLimitDisplay">₹0</b><br>
+<span id="budgetRemainingLine">Remaining: ₹0</span>
 </p>
-<button class="btn primary" style="width:100%" onclick="toast('Budget optimized — ₹2,300 potential savings found!')">Optimize Budget</button>
+<button class="btn primary" id="limit2" style="width:100%" onclick="toast('Budget optimized!!')">Optimize Budget</button>
 </div>
 
 </div>
